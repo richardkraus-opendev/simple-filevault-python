@@ -1,17 +1,8 @@
 # Simple Filevault
 
-A simple Python-based utility for text and file encryption using post-quantum algorithms. 
-
-## Overview
-This project serves as a practical sandbox for learning cryptographic implementation. It focuses on integrating post-quantum libraries into a functional CLI tool.
+A Python-based utility for text and file encryption with symmetric algorithms.
 
 ## Features
-- Symmetric and asymmetric encryption routines.
-- Basic CLI for encrypting/decrypting local strings.
-
-## Usage
-Run the main script to start the interface:
-python main.py
-
-## License
-MIT
+- Symmetric encryption.
+- CLI for encrypting and decrypting local strings/files.
+- Practical implementation of cryptographic libraries in Python.
