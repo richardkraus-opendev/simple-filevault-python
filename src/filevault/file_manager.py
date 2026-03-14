@@ -1,21 +1,14 @@
 from pathlib import Path
 
-def read_file(path: str) -> bytes:
+def read_file(path: Path) -> bytes:
     """
     reads file and returns its bytes
-    """
-    file_path = Path(path)
+    """ 
+    return path.read_bytes()
 
-    if (not file_path.exists()):                    #if file doesn't exists
-        raise FileNotFoundError(f"File {path} not found.")  
-    
-    return file_path.read_bytes()
-
-def write_file(path: str, data: bytes) -> None:
+def write_file(path: Path, data: bytes) -> None:
     """
-    writes bytes to a file
+    writes bytes to the file
     """
-    file_path = Path(path)
-
-    file_path.write_bytes(data)
+    path.write_bytes(data)
 

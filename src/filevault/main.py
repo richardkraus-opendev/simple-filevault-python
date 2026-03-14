@@ -1,5 +1,7 @@
-from crypto_engine import get_keys_32, encrypt_AES, decrypt_AES
+from crypto.crypto_engine import encrypt_AES, decrypt_AES
 from file_manager import read_file, write_file
+from cli import parse_args
+from pathlib import Path
 import os
 import logging
 
@@ -9,34 +11,56 @@ def main() -> None:
     """
 
     setup_logger()
+    args = parse_args()
+    input_file = Path(args.file)
 
-    input_file = "examples/sample.txt"
-    encrypted_file = "examples/sample.txt.enc"
-    decrypted_file = "examples/sample.txt.enc.dec"
+    if not input_file.exists():
+        logging.error(f"Input file does not exist: {input_file}")       #if file doesn't exists
+        return 1
+    
+    output_path = get_output_path(args, input_file)
+    if output_path.exists():
+        logging.warning(f"Output file already exists and will be overwritten: {output_path}")
+    
+    if output_path.resolve() == input_file.resolve():
+        logging.warning(
+            "Output file cannot be the same as input file, overwriting original"
+        )
 
-    try:
-        original_data = read_file(input_file)
-        key = get_keys_32()
+    if args.command == "encrypt":
+            
+        data = read_file(input_file)
 
-        logging.info(f"Encypting {input_file} file with AES key = [{key}] and writing as {encrypted_file}.")
-        encrypted_data = encrypt_AES(original_data, key)
-        write_file(encrypted_file, encrypted_data)
+        logging.info(f"Encrypting {input_file} file and writing as {output_path}")
+        encrypted = encrypt_AES(data, args.password)
 
-        logging.info(f"Decrypting {encrypted_file} and writing as {decrypted_file}.")
-        encrypted_data_from_file = read_file(encrypted_file)
-        decrypted_data = decrypt_AES(encrypted_data_from_file, key)
-        write_file(decrypted_file, decrypted_data)
+        write_file(output_path, encrypted)
 
-        logging.info("Process completed successfully.")
-    except FileNotFoundError as e:
-        logging.exception(f"File not found: {e.filename}.")
-    except ValueError:
-        logging.exception("Decryption failed (authentication error).")
+        logging.info("Encryption completed successfully")
+
+
+    elif args.command == "decrypt":
+        try:            
+            data = read_file(input_file)
+
+            logging.info(f"Decrypting {input_file} and writing as {output_path}")
+            decrypted = decrypt_AES(data, args.password)
+
+            write_file(output_path, decrypted)
+
+            logging.info("Decryption completed successfully")
+            
+        except ValueError as e:
+            logging.exception("Decryption failed")
+            return 1 
+    
+    return 0
+
 
 def setup_logger() -> None:
     """
-    Configures application logging.
-    Logs are written both to console and to logs/app.log file.
+    Configures application logging
+    Logs are written both to console and to logs (app.log)
     """
 
     os.makedirs("logs", exist_ok=True)
@@ -50,11 +74,25 @@ def setup_logger() -> None:
         ]
     )
 
+def get_output_path(args, input_file: Path) -> Path:
+    """
+    returns working output_path
+    """
+
+    if args.output:
+        return Path(args.output)
+    
+    if args.command == "encrypt":
+        return input_file.with_suffix(input_file.suffix + ".enc")
+
+    if args.command == "decrypt":
+        if input_file.suffix == ".enc":
+            return input_file.with_suffix("")
+        else:
+            return Path(str(input_file) + ".dec")
 
 
-"""
-main() runs only when this file is executed directly (not when it is imported as a module).
-"""
+
 if __name__ == "__main__":
     import sys
     sys.exit(main())
