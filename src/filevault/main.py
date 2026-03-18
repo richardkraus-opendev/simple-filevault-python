@@ -1,21 +1,23 @@
-from crypto.crypto_engine import encrypt_AES, decrypt_AES
+from crypto.aes import AESGCM
 from file_manager import read_file, write_file
 from cli import parse_args
 from pathlib import Path
 import os
 import logging
 
+
 def main() -> None:
     """
     main
     """
 
+    aes = AESGCM()
     setup_logger()
     args = parse_args()
     input_file = Path(args.file)
 
     if not input_file.exists():
-        logging.error(f"Input file does not exist: {input_file}")       #if file doesn't exists
+        logging.error(f"Input file does not exist: {input_file}")
         return 1
     
     output_path = get_output_path(args, input_file)
@@ -32,7 +34,7 @@ def main() -> None:
         data = read_file(input_file)
 
         logging.info(f"Encrypting {input_file} file and writing as {output_path}")
-        encrypted = encrypt_AES(data, args.password)
+        encrypted = aes.encrypt(data, args.password)
 
         write_file(output_path, encrypted)
 
@@ -44,7 +46,7 @@ def main() -> None:
             data = read_file(input_file)
 
             logging.info(f"Decrypting {input_file} and writing as {output_path}")
-            decrypted = decrypt_AES(data, args.password)
+            decrypted = aes.decrypt(data, args.password)
 
             write_file(output_path, decrypted)
 
