@@ -19,7 +19,7 @@
 Clone the repository and install in editable mode:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/filevault.git
+git clone https://github.com/richardkraus-opendev/simple-filevault-python.git
 cd filevault
 
 python3 -m venv venv
