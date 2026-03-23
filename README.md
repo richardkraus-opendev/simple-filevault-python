@@ -20,7 +20,7 @@ Clone the repository and install in editable mode:
 
 ```bash
 git clone https://github.com/richardkraus-opendev/simple-filevault-python.git
-cd filevault
+cd simple-filevault-python
 
 python3 -m venv venv
 source venv/bin/activate
@@ -35,7 +35,7 @@ pip install -e .
  - Decrypt a file
  - filevault decrypt -f input.txt.enc -p yourpassword
 
-###Optional output
+### Optional output
 
 Specify a custom output file:
 
