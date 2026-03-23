@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "filevault"
+version = "0.1.0"
+description = "Simple CLI tool for file encryption using AES-GCM"
+authors = [{ name = "Your Name" }]
+dependencies = [
+    "pycryptodome"
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.scripts]
+filevault = "filevault.main:main"

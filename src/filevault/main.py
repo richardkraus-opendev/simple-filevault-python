@@ -1,6 +1,6 @@
-from crypto.aes import AESGCM
-from file_manager import read_file, write_file
-from cli import parse_args
+from filevault.crypto.aes import AESGCM
+from filevault.file_manager import read_file, write_file
+from filevault.cli import parse_args
 from pathlib import Path
 import os
 import logging
