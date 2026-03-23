@@ -27,20 +27,30 @@ source venv/bin/activate
 
 pip install -e .
 ```
+> The -e option installs FileVault in editable mode, so you can run the filevault command directly in the virtual environment.
+---
 
 ## Usage
 
- - Encrypt a file
- - filevault encrypt -f input.txt -p yourpassword
- - Decrypt a file
- - filevault decrypt -f input.txt.enc -p yourpassword
-
+ - Encrypt a file:
+```bash   
+filevault encrypt -f input.txt -p yourpassword
+```
+ - Decrypt a file:
+```bash   
+filevault decrypt -f input.txt.enc -p yourpassword
+```
 ### Optional output
 
 Specify a custom output file:
+```bash
+filevault encrypt -f input.txt -p yourpassword -o secret.enc
+```
+```bash
+filevault decrypt -f secret.enc -p yourpassword -o decrypted.txt
+```
 
-`filevault encrypt -f input.txt -p yourpassword -o secret.enc`
-`filevault decrypt -f secret.enc -p yourpassword -o decrypted.txt`
+---
 
 ## Output behavior
 
@@ -50,4 +60,4 @@ Default output if --output is not provided:
   - .enc → restores original filename
   - Other → .dec is appended
 
-Overwrite warnings: FileVault will warn if the output file already exists or matches the input file.
+> **Overwrite warning:** FileVault will warn if the output file already exists or matches the input file.
