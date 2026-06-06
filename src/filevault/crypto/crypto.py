@@ -30,9 +30,9 @@ class Crypto(ABC):
         return key
 
     @abstractmethod
-    def encrypt():
+    def encrypt (self, data: bytes, password: str) -> bytes:
         pass
 
     @abstractmethod
-    def decrypt():
+    def decrypt(self, data: bytes, password: str) -> bytes:
         pass

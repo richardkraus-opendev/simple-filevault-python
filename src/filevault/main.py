@@ -30,15 +30,15 @@ def main() -> None:
         )
 
     if args.command == "encrypt":
-            
-        data = read_file(input_file)
-
-        logging.info(f"Encrypting {input_file} file and writing as {output_path}")
-        encrypted = aes.encrypt(data, args.password)
-
-        write_file(output_path, encrypted)
-
-        logging.info("Encryption completed successfully")
+        try:
+            data = read_file(input_file)
+            logging.info(f"Encrypting {input_file} file and writing as {output_path}")
+            encrypted = aes.encrypt(data, args.password)
+            write_file(output_path, encrypted)
+            logging.info("Encryption completed successfully")
+        except Exception as e:
+            logging.exception("Encryption failed")
+            return 1
 
 
     elif args.command == "decrypt":
@@ -61,17 +61,21 @@ def main() -> None:
 
 def setup_logger() -> None:
     """
-    Configures application logging
-    Logs are written both to console and to logs (app.log)
+    Configure logging to ~/.filevault/logs/app.log and console, avoiding duplicate handlers
     """
 
-    os.makedirs("logs", exist_ok=True)
+    if logging.getLogger().hasHandlers():
+        return
+
+    log_dir = Path.home() / ".filevault" / "logs"
+    log_dir.mkdir(parents=True, exist_ok=True)
+    log_file = log_dir / "app.log"
 
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s | %(levelname)s | %(message)s",
         handlers=[
-            logging.FileHandler("logs/app.log"),
+            logging.FileHandler(log_file),
             logging.StreamHandler()
         ]
     )

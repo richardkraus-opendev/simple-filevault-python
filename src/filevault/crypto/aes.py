@@ -7,10 +7,12 @@ from .crypto import Crypto
 class AESGCM(Crypto):
 
     SALT_SIZE = 16
-    NONCE_SIZE = 16
+    NONCE_SIZE = 12
     TAG_SIZE = 16
     KEY_SIZE = 32
     PBKDF2_ITERATIONS = 100_000
+
+    MAGIC = b'FILEVAULT\x00'
 
     def encrypt(self, data :bytes, password :str) -> bytes:
         """
@@ -26,7 +28,8 @@ class AESGCM(Crypto):
         cipher = AES.new(key, AES.MODE_GCM)
         ciphertext, tag = cipher.encrypt_and_digest(data)
 
-        return cipher.nonce + tag + salt + ciphertext
+        encrypted = cipher.nonce + tag + salt + ciphertext
+        return MAGIC + encrypted
 
     
     def decrypt(self, data :bytes, password :str) -> bytes:
@@ -41,7 +44,11 @@ class AESGCM(Crypto):
             ValueError if data size < 48
         """
 
-        if len(data) < self.NONCE_SIZE + self.TAG_SIZE + self.SALT_SIZE + self.SALT_SIZE:
+        if not data.startswith(MAGIC):
+            raise ValueError("Not a valid FileVault encrypted file")
+        data = data[len(MAGIC):]
+
+        if len(data) < self.NONCE_SIZE + self.TAG_SIZE + self.SALT_SIZE:
             raise ValueError("Invalid encrypted file format")
 
         nonce = data[: self.NONCE_SIZE]
