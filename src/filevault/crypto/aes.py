@@ -19,7 +19,7 @@ class AESGCM(Crypto):
         Encrypts data using AES-256 in GCM mode
 
         Output format:
-                [ 16 bytes nonce | 16 bytes authentication tag | SALT_SIZE bytes salt | ciphertext ]
+            [ 10 bytes magic | 12 bytes nonce | 16 bytes tag | 16 bytes salt | ciphertext ]
         """
 
         salt = get_random_bytes(self.SALT_SIZE)
@@ -29,7 +29,7 @@ class AESGCM(Crypto):
         ciphertext, tag = cipher.encrypt_and_digest(data)
 
         encrypted = cipher.nonce + tag + salt + ciphertext
-        return MAGIC + encrypted
+        return self.MAGIC + encrypted
 
     
     def decrypt(self, data :bytes, password :str) -> bytes:
@@ -37,16 +37,17 @@ class AESGCM(Crypto):
         Decrypts data using AES-256 in GCM mode
 
         Expected input format:
-            [ 16 bytes nonce | 16 bytes authentication tag | SALT_SIZE bytes salt | ciphertext ]
+            [ 10 bytes magic | 12 bytes nonce | 16 bytes tag | 16 bytes salt | ciphertext ]
 
         Raises:
+            ValueError if not a valid FileVault file (missing magic)
             ValueError if authentication fails
-            ValueError if data size < 48
+            ValueError if data size < 54 (10 magic + 44 crypto)
         """
 
-        if not data.startswith(MAGIC):
+        if not data.startswith(self.MAGIC):
             raise ValueError("Not a valid FileVault encrypted file")
-        data = data[len(MAGIC):]
+        data = data[len(self.MAGIC):]
 
         if len(data) < self.NONCE_SIZE + self.TAG_SIZE + self.SALT_SIZE:
             raise ValueError("Invalid encrypted file format")
