@@ -23,12 +23,13 @@ class AESGCM(Crypto):
         """
 
         salt = get_random_bytes(self.SALT_SIZE)
-        key= self.derive_key(password, salt)
+        nonce = get_random_bytes(self.NONCE_SIZE)
+        key = self.derive_key(password, salt)
 
-        cipher = AES.new(key, AES.MODE_GCM)
+        cipher = AES.new(key, AES.MODE_GCM, nonce=nonce)
         ciphertext, tag = cipher.encrypt_and_digest(data)
 
-        encrypted = cipher.nonce + tag + salt + ciphertext
+        encrypted = nonce + tag + salt + ciphertext
         return self.MAGIC + encrypted
 
     
