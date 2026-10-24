@@ -1,5 +1,7 @@
 # FileVault
 
+[![Python Tests](https://github.com/richardkraus-opendev/simple-filevault-python/actions/workflows/tests.yaml/badge.svg)](https://github.com/richardkraus-opendev/simple-filevault-python/actions/workflows/tests.yaml)
+
 **FileVault** is a secure and easy-to-use CLI tool for file encryption and decryption using **AES-256-GCM** with password-based key derivation. It ensures both **confidentiality and integrity** of your files.
 
 ---
